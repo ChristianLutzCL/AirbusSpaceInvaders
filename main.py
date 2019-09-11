@@ -9,6 +9,7 @@ IMAGE_PATH = BASE_PATH + '/images/'
 SOUND_PATH = BASE_PATH + '/sounds/'
 
 #Color = (Red, Green, Blue)
+BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (78, 255, 87)
 YELLOW = (241, 255, 0)
@@ -21,7 +22,7 @@ DISPLAY_WIDTH = 530
 DISPLAY_HEIGHT = 511
 SCREEN = display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
-IMAGE_NAMES = ['ship', 
+IMAGE_NAMES = ['aircraft', 
                'enemy1_1', 'enemy1_2',
                'enemy2_1', 'enemy2_2', 
                'enemy3_1', 'enemy3_2',
@@ -32,40 +33,54 @@ IMAGES = {name: image.load(IMAGE_PATH + '{}.png'.format(name)).convert_alpha()
 
 
 
-class Ship(sprite.Sprite):
+class PlayerAircraft(sprite.Sprite):
     def __init__(self):
         sprite.Sprite.__init__(self)
-        self.image = IMAGES['ship']
-        self.rect = self.image.get_rect(topleft=(375, 540))
-        self.speed = 5
+        self.image = IMAGES['aircraft']
+        self.rect = self.image.get_rect()
+        self.speed = 100
 
-    def update(self, keys, *args):
-        if keys[K_LEFT] and self.rect.x > 10:
-            self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.x < 740:
-            self.rect.x += self.speed
-        game.screen.blit(self.image, self.rect)
+    def move(self, x, y):
+        game.screen.blit(self.image, (x, y))
 
 
 
 
-class SpaceInvaders(object):
+
+class AirbusInvaders(object):
     def __init__(self):
         init()
+        self.clock = time.Clock()
         self.background = image.load(IMAGE_PATH + 'airbus_nd.jpg').convert()
         self.screen = SCREEN
-        self.mainScreen = True
+
+        self.startGame = True
+
+        self.p = PlayerAircraft()
+
+        self.x = 50
+        self.y = 50
+
 
 
 
     def main(self):
         while True:
-            if self.mainScreen:
-                self.screen.blit(self.background, (0,0))
+            for e in event.get():
+                if e.type == KEYDOWN:
+                    if e.key == K_LEFT:
+                        self.x += 10
+                        self.p.move(self.x, 50)
+                    elif e.key == K_RIGHT:
+                        self.x -= 10
+                        self.p.move(self.x, 400)
+                    
+            #self.screen.blit(self.background, (0,0))
             display.update()
+            self.clock.tick(60)
 
 
 
 if __name__ == '__main__':
-    game = SpaceInvaders()
+    game = AirbusInvaders()
     game.main()
